@@ -8,6 +8,7 @@ public class Settings {
 	public static KeyBinding UP_MOVE = keyBinding("upMove", KeyEvent.VK_W);
 	public static KeyBinding RIGHT_MOVE = keyBinding("rightMove", KeyEvent.VK_D);
 	public static KeyBinding DOWN_MOVE = keyBinding("downMove", KeyEvent.VK_S);
+	public static KeyBinding SWITCH_TILE = keyBinding("switchTile", KeyEvent.VK_Q);
 	
 	public static KeyBinding keyBinding(String name, int standartKey) {
 		return new KeyBinding(name, standartKey);

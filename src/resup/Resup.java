@@ -4,15 +4,15 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.event.KeyEvent;
-
 import mp.math.TilePos;
 import mpengine.EngineInput;
 import mpengine.IEngineInterface;
 import mpengine.MPEngineObject;
 import resup.entity.EntityPlayer;
+import resup.init.Items;
 import resup.init.Tiles;
 import resup.tile.Tile;
+import resup.tileentity.TileEntity;
 import resup.world.World;
 
 public class Resup implements IEngineInterface {
@@ -22,14 +22,11 @@ public class Resup implements IEngineInterface {
 	
 	public static World world;
 	
-	public static int currentTile = 0;
-	
-	/*
-	 * Kek
-	 */
+	public static int currentTile = 1;
 	
 	public static void main(String... args) {
 		
+		Items.registerItems();
 		Tiles.registerTiles();
 		
 		world = new World();
@@ -45,18 +42,13 @@ public class Resup implements IEngineInterface {
 	public void updateLoop() {
 		Point mp = input.getMousePos();
 		if (input.isButton(1)) {
-			int tx = mp.x / 32;
-			int ty = mp.y / 32;
 			
-			if (tx >= 0 && ty >= 0 && tx < 16 && ty < 16) {
-				world.setTile(new TilePos(tx, ty), Tiles.getTileFromId(currentTile));
-			}
 		}
 		
-		if (input.isKeyReal(KeyEvent.VK_EQUALS)) {
+		if (Settings.SWITCH_TILE.isKeyReal(input)) {
 			currentTile++;
 			if (currentTile >= Tiles.getTilesCount()) {
-				currentTile = 0;
+				currentTile = 1;
 			}
 		}
 	}
@@ -72,18 +64,25 @@ public class Resup implements IEngineInterface {
 		
 		for (int a = 0; a < 16; a++) {
 			for (int b = 0; b < 16; b++) {
-				Tile t = world.getTile(new TilePos(a, b));
+				TilePos p = new TilePos(a, b);
+				
+				Tile t = world.getTile(p);
 				if (t != Tiles.AIR) {
 					graphics.setColor(t.color);
 					graphics.fillRect(a * 32, b * 32, 32, 32);
 				}
+				
+				TileEntity te = world.getTileEntity(p);
+				if (te != null) {
+					graphics.setColor(Color.YELLOW);
+					graphics.drawOval(a * 32, b * 32, 32, 32);
+				}
 			}
 		}
 		
-		Tile current = Tiles.getTileFromId(currentTile);
-		if (current != null) {
-			graphics.setColor(current.color);
-			graphics.fillRect(0, 0, 16, 16);
+		graphics.setColor(Color.DARK_GRAY);
+		for (int a = 0; a < 10; a++) {
+			graphics.fillRect(4 + a * 36, 4, 32, 32);
 		}
 	}
 }

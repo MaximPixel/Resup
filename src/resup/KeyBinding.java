@@ -10,6 +10,7 @@ public class KeyBinding {
 	public KeyBinding(String name, int standartKey) {
 		this.name = name;
 		this.standartKey = standartKey;
+		this.currentKey = standartKey;
 	}
 	
 	public int setStandartKey() {
@@ -18,5 +19,9 @@ public class KeyBinding {
 	
 	public boolean isKey(EngineInput input) {
 		return input.isKey(currentKey);
+	}
+	
+	public boolean isKeyReal(EngineInput input) {
+		return input.isKeyReal(currentKey);
 	}
 }

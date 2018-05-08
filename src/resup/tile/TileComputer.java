@@ -10,7 +10,7 @@ import resup.world.World;
 public class TileComputer extends Tile {
 	
 	public TileComputer() {
-		super(Color.BLACK);
+		super(Color.BLACK, "computer");
 	}
 
 	public TileEntity createTileEntity(World world, TilePos pos) {
