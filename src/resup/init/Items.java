@@ -24,4 +24,13 @@ public class Items {
 		item.id = items.size();
 		items.add(item);
 	}
+	
+	public static Item getItemByName(String name) {
+		for (Item i : items) {
+			if (name.equalsIgnoreCase(i.name)) {
+				return i;
+			}
+		}
+		return null;
+	}
 }

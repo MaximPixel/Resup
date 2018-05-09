@@ -38,4 +38,8 @@ public class Tile {
 	public TileEntity createTileEntity(World world, TilePos pos) {
 		return null;
 	}
+	
+	public ItemTile getTileItem() {
+		return (ItemTile) Items.getItemByName(name);
+	}
 }

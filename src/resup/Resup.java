@@ -11,8 +11,10 @@ import mpengine.MPEngineObject;
 import resup.entity.EntityPlayer;
 import resup.init.Items;
 import resup.init.Tiles;
+import resup.inventory.InventoryPlayer;
 import resup.tile.Tile;
 import resup.tileentity.TileEntity;
+import resup.util.ItemStack;
 import resup.world.World;
 
 public class Resup implements IEngineInterface {
@@ -23,6 +25,8 @@ public class Resup implements IEngineInterface {
 	public static World world;
 	
 	public static int currentTile = 1;
+	
+	public static InventoryPlayer playerInventory = new InventoryPlayer();
 	
 	public static void main(String... args) {
 		
@@ -83,6 +87,10 @@ public class Resup implements IEngineInterface {
 		graphics.setColor(Color.DARK_GRAY);
 		for (int a = 0; a < 10; a++) {
 			graphics.fillRect(4 + a * 36, 4, 32, 32);
+			ItemStack stack = playerInventory.slots.get(a).stack;
+			if (stack.item != Items.getItemByName("air")) {
+				
+			}
 		}
 	}
 }
