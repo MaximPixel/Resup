@@ -4,6 +4,8 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
+
 import mp.math.TilePos;
 import mpengine.EngineInput;
 import mpengine.IEngineInterface;
@@ -27,8 +29,11 @@ public class Resup implements IEngineInterface {
 	public static int currentTile = 1;
 	
 	public static InventoryPlayer playerInventory = new InventoryPlayer();
+	public static int currentSlot = 0;
 	
 	public static void main(String... args) {
+		
+		playerInventory.slots.get(0).stack = new ItemStack(Tiles.BRICK, 1);
 		
 		Items.registerItems();
 		Tiles.registerTiles();
@@ -53,6 +58,13 @@ public class Resup implements IEngineInterface {
 			currentTile++;
 			if (currentTile >= Tiles.getTilesCount()) {
 				currentTile = 1;
+			}
+		}
+		
+		if (input.isKeyReal(KeyEvent.VK_E)) {
+			currentSlot++;
+			if (currentSlot >= 10) {
+				currentSlot = 0;
 			}
 		}
 	}
@@ -84,12 +96,17 @@ public class Resup implements IEngineInterface {
 			}
 		}
 		
-		graphics.setColor(Color.DARK_GRAY);
 		for (int a = 0; a < 10; a++) {
-			graphics.fillRect(4 + a * 36, 4, 32, 32);
+			graphics.setColor(Color.DARK_GRAY);
+			if (currentSlot == a) {
+				graphics.fillRect(4 + a * 36 - 2, 2, 36, 36);
+			} else {
+				graphics.fillRect(4 + a * 36, 4, 32, 32);
+			}
 			ItemStack stack = playerInventory.slots.get(a).stack;
 			if (stack.item != Items.getItemByName("air")) {
-				
+				graphics.setColor(Color.RED);
+				graphics.drawString(stack.item.name + "x" + stack.count, 4 + a * 36, 16);
 			}
 		}
 	}
