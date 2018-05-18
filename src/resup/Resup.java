@@ -32,8 +32,6 @@ public class Resup implements IEngineInterface {
 	
 	public static World world;
 	
-	public static int currentTile = 1;
-	
 	public static InventoryPlayer playerInventory = new InventoryPlayer();
 	public static int currentSlot = 0;
 	
@@ -42,8 +40,8 @@ public class Resup implements IEngineInterface {
 		playerInventory.slots.get(0).stack = new ItemStack(Tiles.BRICK, 2);
 		playerInventory.slots.get(1).stack = new ItemStack(Items.PICKAXE, 1);
 		
-		images.put("pickaxe", EngineFiles.loadImage("res/resup/images/pickaxe.png"));
-		images.put("brick", EngineFiles.loadImage("res/resup/images/brick.png"));
+		images.put("pickaxe", EngineFiles.loadImage("res/resup/images/items/pickaxe.png"));
+		images.put("brick", EngineFiles.loadImage("res/resup/images/items/brick.png"));
 		
 		Items.registerItems();
 		Tiles.registerTiles();
@@ -62,13 +60,6 @@ public class Resup implements IEngineInterface {
 		Point mp = input.getMousePos();
 		if (input.isButton(1)) {
 			
-		}
-		
-		if (Settings.SWITCH_TILE.isKeyReal(input)) {
-			currentTile++;
-			if (currentTile >= Tiles.getTilesCount()) {
-				currentTile = 1;
-			}
 		}
 		
 		if (input.isKeyReal(KeyEvent.VK_E)) {
