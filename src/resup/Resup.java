@@ -5,8 +5,11 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.util.HashMap;
 
 import mp.math.TilePos;
+import mpengine.EngineFiles;
 import mpengine.EngineInput;
 import mpengine.IEngineInterface;
 import mpengine.MPEngineObject;
@@ -14,6 +17,7 @@ import resup.entity.EntityPlayer;
 import resup.init.Items;
 import resup.init.Tiles;
 import resup.inventory.InventoryPlayer;
+import resup.item.Item;
 import resup.tile.Tile;
 import resup.tileentity.TileEntity;
 import resup.util.ItemStack;
@@ -24,6 +28,8 @@ public class Resup implements IEngineInterface {
 	public static MPEngineObject mpe = new MPEngineObject();
 	public static EngineInput input;
 	
+	public static HashMap<String, BufferedImage> images = new HashMap();
+	
 	public static World world;
 	
 	public static int currentTile = 1;
@@ -33,7 +39,11 @@ public class Resup implements IEngineInterface {
 	
 	public static void main(String... args) {
 		
-		playerInventory.slots.get(0).stack = new ItemStack(Tiles.BRICK, 1);
+		playerInventory.slots.get(0).stack = new ItemStack(Tiles.BRICK, 2);
+		playerInventory.slots.get(1).stack = new ItemStack(Items.PICKAXE, 1);
+		
+		images.put("pickaxe", EngineFiles.loadImage("res/resup/images/pickaxe.png"));
+		images.put("brick", EngineFiles.loadImage("res/resup/images/brick.png"));
 		
 		Items.registerItems();
 		Tiles.registerTiles();
@@ -104,10 +114,23 @@ public class Resup implements IEngineInterface {
 				graphics.fillRect(4 + a * 36, 4, 32, 32);
 			}
 			ItemStack stack = playerInventory.slots.get(a).stack;
-			if (stack.item != Items.getItemByName("air")) {
+			
+			drawItem(graphics, 4 + a * 36, 4, stack);
+			
+			if (stack.item != Items.getItemByName("air") && stack.count > 1) {
 				graphics.setColor(Color.RED);
-				graphics.drawString(stack.item.name + "x" + stack.count, 4 + a * 36, 16);
+				graphics.drawString("" + stack.count, 4 + a * 36, 16);
 			}
+		}
+	}
+	
+	public static void drawItem(Graphics2D graphics, int x, int y, ItemStack stack) {
+		Item item = stack.item;
+		
+		BufferedImage img = images.get(item.name);
+		
+		if (img != null) {
+			graphics.drawImage(img, x, y, 32, 32, null);
 		}
 	}
 }

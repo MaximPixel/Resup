@@ -12,6 +12,19 @@ public class ItemStack {
 	public int count;
 	
 	public ItemStack(Item item, int count) {
+		
+		if (count > 999) {
+			count = 999;
+		}
+		
+		if (count <= 0) {
+			item = Tiles.AIR.getTileItem();
+		}
+		
+		if (item == Tiles.AIR.getTileItem()) {
+			count = 0;
+		}
+		
 		this.item = item;
 		this.count = count;
 	}
