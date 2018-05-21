@@ -1,9 +1,11 @@
 package resup;
 
+import java.awt.BasicStroke;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Stroke;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
@@ -32,19 +34,20 @@ public class Resup implements IEngineInterface {
 	
 	public static World world;
 	
-	public static InventoryPlayer playerInventory = new InventoryPlayer();
+	public static InventoryPlayer playerInventory;
 	public static int currentSlot = 0;
 	
 	public static void main(String... args) {
 		
-		playerInventory.slots.get(0).stack = new ItemStack(Tiles.BRICK, 2);
-		playerInventory.slots.get(1).stack = new ItemStack(Items.PICKAXE, 1);
-		
 		images.put("pickaxe", EngineFiles.loadImage("res/resup/images/items/pickaxe.png"));
 		images.put("brick", EngineFiles.loadImage("res/resup/images/items/brick.png"));
 		
-		Items.registerItems();
-		Tiles.registerTiles();
+		Tiles.init();
+		Items.init();
+		
+		playerInventory = new InventoryPlayer();
+		
+		playerInventory.slots.get(1).stack = new ItemStack(Items.PICKAXE, 1);
 		
 		world = new World();
 		world.addEntity(new EntityPlayer(), 0D, 0D);
@@ -59,7 +62,12 @@ public class Resup implements IEngineInterface {
 	public void updateLoop() {
 		Point mp = input.getMousePos();
 		if (input.isButton(1)) {
+			ItemStack stack = playerInventory.slots.get(currentSlot).stack;
 			
+			if (!stack.isEmpty()) {
+				TilePos pos = new TilePos(mp.x / 32, mp.y / 32);
+				stack.item.onUse(world, pos, stack);
+			}
 		}
 		
 		if (input.isKeyReal(KeyEvent.VK_E)) {
@@ -106,10 +114,12 @@ public class Resup implements IEngineInterface {
 			}
 			ItemStack stack = playerInventory.slots.get(a).stack;
 			
-			drawItem(graphics, 4 + a * 36, 4, stack);
-			
-			if (stack.item != Items.getItemByName("air") && stack.count > 1) {
+			if (stack != null) {
+				
+				drawItem(graphics, 4 + a * 36, 4, stack);
+				
 				graphics.setColor(Color.RED);
+				graphics.setStroke(new BasicStroke(10));
 				graphics.drawString("" + stack.count, 4 + a * 36, 16);
 			}
 		}

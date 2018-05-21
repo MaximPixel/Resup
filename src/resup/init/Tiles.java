@@ -8,14 +8,18 @@ import resup.tile.TileComputer;
 
 public class Tiles {
 	
-	public static final Tile AIR = new Tile(Color.BLUE, "air").addItem();
-	public static final Tile BRICK = new Tile(Color.RED, "brick").addItem();
+	public static final Tile AIR = new Tile(Color.BLUE, "air");
+	public static final Tile BRICK = new Tile(Color.RED, "brick");
 	public static final TileComputer COMPUTER = new TileComputer();
 	
 	private static ArrayList<Tile> tiles = new ArrayList();
 	
-	public static void registerTiles() {
+	public static void init() {
 		register(AIR, BRICK, COMPUTER);
+	}
+	
+	public static void preInit() {
+		
 	}
 	
 	public static void register(Tile... tiles) {

@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import mp.math.TilePos;
 import resup.init.Items;
+import resup.item.Item;
 import resup.item.ItemTile;
 import resup.tileentity.TileEntity;
 import resup.world.World;
@@ -20,7 +21,7 @@ public class Tile {
 	}
 	
 	public Tile addItem() {
-		Items.register(new ItemTile(this));
+		Items.addToReg(new ItemTile(this));
 		return this;
 	}
 	
@@ -39,7 +40,7 @@ public class Tile {
 		return null;
 	}
 	
-	public ItemTile getTileItem() {
-		return (ItemTile) Items.getItemByName(name);
+	public Item getTileItem() {
+		return Items.PICKAXE;
 	}
 }

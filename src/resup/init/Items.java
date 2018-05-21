@@ -3,24 +3,32 @@ package resup.init;
 import java.util.ArrayList;
 
 import resup.item.Item;
+import resup.item.ItemTile;
 
 public class Items {
 	
 	public static final Item PICKAXE = new Item("pickaxe");
 	
+	public static final ItemTile AIR_TILE = new ItemTile(Tiles.AIR);
+	public static final ItemTile BRICK_TILE = new ItemTile(Tiles.BRICK);
+	
 	private static ArrayList<Item> items = new ArrayList();
 	
-	public static void registerItems() {
-		register(PICKAXE);
+	public static void init() {
+		addToReg(PICKAXE, AIR_TILE, BRICK_TILE);
 	}
 	
-	public static void register(Item... items) {
+	public static void preInit() {
+		
+	}
+	
+	public static void addToReg(Item... items) {
 		for (Item i : items) {
-			register(i);
+			addToReg(i);
 		}
 	}
 	
-	public static void register(Item item) {
+	public static void addToReg(Item item) {
 		item.id = items.size();
 		items.add(item);
 	}
