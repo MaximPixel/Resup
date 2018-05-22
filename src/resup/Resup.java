@@ -3,16 +3,21 @@ package resup;
 import java.awt.BasicStroke;
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Stroke;
+import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.event.KeyEvent;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
 import mp.math.TilePos;
 import mpengine.EngineFiles;
 import mpengine.EngineInput;
+import mpengine.EngineMath;
 import mpengine.IEngineInterface;
 import mpengine.MPEngineObject;
 import resup.entity.EntityPlayer;
@@ -36,6 +41,8 @@ public class Resup implements IEngineInterface {
 	
 	public static InventoryPlayer playerInventory;
 	public static int currentSlot = 0;
+	
+	public static ItemStack cursorSlot = null;
 	
 	public static void main(String... args) {
 		
@@ -61,12 +68,18 @@ public class Resup implements IEngineInterface {
 	@Override
 	public void updateLoop() {
 		Point mp = input.getMousePos();
-		if (input.isButton(1)) {
-			ItemStack stack = playerInventory.slots.get(currentSlot).stack;
+		if (input.isButtonDown(1)) {
 			
-			if (!stack.isEmpty()) {
-				TilePos pos = new TilePos(mp.x / 32, mp.y / 32);
-				stack.item.onUse(world, pos, stack);
+			boolean f = clickGui(mp);
+			
+			if (!f) {
+				
+				ItemStack stack = playerInventory.slots.get(currentSlot).stack;
+				
+				if (stack != null && !stack.isEmpty()) {
+					TilePos pos = new TilePos(mp.x / 32, mp.y / 32);
+					stack.item.onUse(world, pos, stack);
+				}
 			}
 		}
 		
@@ -75,6 +88,8 @@ public class Resup implements IEngineInterface {
 			if (currentSlot >= 10) {
 				currentSlot = 0;
 			}
+			
+			playerInventory.slots.get(1).stack.count++;
 		}
 	}
 
@@ -83,6 +98,10 @@ public class Resup implements IEngineInterface {
 		
 		int width = canvas.getWidth();
 		int height = canvas.getHeight();
+		
+		Point mp = input.getMousePos();
+		
+		graphics.setFont(new Font(null, 16, 20));
 		
 		graphics.setColor(Color.GRAY);
 		graphics.fillRect(0, 0, width, height);
@@ -117,12 +136,40 @@ public class Resup implements IEngineInterface {
 			if (stack != null) {
 				
 				drawItem(graphics, 4 + a * 36, 4, stack);
-				
-				graphics.setColor(Color.RED);
-				graphics.setStroke(new BasicStroke(10));
-				graphics.drawString("" + stack.count, 4 + a * 36, 16);
 			}
 		}
+		
+		if (cursorSlot != null) {
+			drawItem(graphics, mp.x, mp.y, cursorSlot);
+		}
+	}
+	
+	public static boolean clickGui(Point mp) {
+		for (int a = 0; a < 10; a++) {
+			if (EngineMath.collide(mp.x, mp.y, 4 + a * 36, 4, 32, 32)) {
+				ItemStack s = playerInventory.slots.get(a).stack;
+				playerInventory.slots.get(a).stack = cursorSlot;
+				cursorSlot = s;
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static void onAA(Graphics2D graphics) {
+		graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+
+        graphics.setRenderingHint(RenderingHints.KEY_RENDERING,
+                RenderingHints.VALUE_RENDER_QUALITY);
+	}
+	
+	public static void offAA(Graphics2D graphics) {
+		graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_OFF);
+
+        graphics.setRenderingHint(RenderingHints.KEY_RENDERING,
+                RenderingHints.VALUE_RENDER_DEFAULT);
 	}
 	
 	public static void drawItem(Graphics2D graphics, int x, int y, ItemStack stack) {
@@ -133,5 +180,28 @@ public class Resup implements IEngineInterface {
 		if (img != null) {
 			graphics.drawImage(img, x, y, 32, 32, null);
 		}
+		
+		onAA(graphics);
+		String count = "" + stack.count;
+		if (stack.count >= 100) {
+			count = "+";
+		}
+		int ww = graphics.getFontMetrics().stringWidth(count);
+		drawText(graphics, x + 32 - ww, y + 32, count);
+		offAA(graphics);
+	}
+	
+	public static void drawText(Graphics2D graphics, int x, int y, String text) {
+		FontRenderContext frc = graphics.getFontRenderContext();
+        TextLayout textTl = new TextLayout(text, graphics.getFont(), frc);
+        Shape outline = textTl.getOutline(null);
+        
+        graphics.setStroke(new BasicStroke(0.9999F));
+        graphics.translate(x, y);
+        graphics.setColor(Color.WHITE);
+        graphics.fill(outline);
+        graphics.setColor(Color.BLACK);
+        graphics.draw(outline);
+        graphics.translate(-x, -y);
 	}
 }
