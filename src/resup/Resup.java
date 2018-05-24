@@ -55,6 +55,8 @@ public class Resup implements IEngineInterface {
 		playerInventory = new InventoryPlayer();
 		
 		playerInventory.slots.get(1).stack = new ItemStack(Items.PICKAXE, 1);
+		playerInventory.slots.get(0).stack = new ItemStack(Items.BRICK_TILE, 1);
+		playerInventory.slots.get(2).stack = new ItemStack(Items.BRICK_TILE, 10);
 		
 		world = new World();
 		world.addEntity(new EntityPlayer(), 0D, 0D);
@@ -68,17 +70,18 @@ public class Resup implements IEngineInterface {
 	@Override
 	public void updateLoop() {
 		Point mp = input.getMousePos();
-		if (input.isButtonDown(1)) {
-			
-			boolean f = clickGui(mp);
-			
-			if (!f) {
+		
+		for (int a = 0; a < EngineInput.BUTTONS_COUNT; a++) {
+			if (input.isButtonDown(a)) {
+				boolean f = clickGui(mp, a);
 				
-				ItemStack stack = playerInventory.slots.get(currentSlot).stack;
-				
-				if (stack != null && !stack.isEmpty()) {
-					TilePos pos = new TilePos(mp.x / 32, mp.y / 32);
-					stack.item.onUse(world, pos, stack);
+				if (a == 1 && !f) {
+					ItemStack stack = playerInventory.slots.get(currentSlot).stack;
+					
+					if (stack != null && !stack.isEmpty()) {
+						TilePos pos = new TilePos(mp.x / 32, mp.y / 32);
+						stack.item.onUse(world, pos, stack);
+					}
 				}
 			}
 		}
@@ -144,12 +147,27 @@ public class Resup implements IEngineInterface {
 		}
 	}
 	
-	public static boolean clickGui(Point mp) {
+	public static boolean clickGui(Point mp, int button) {
 		for (int a = 0; a < 10; a++) {
 			if (EngineMath.collide(mp.x, mp.y, 4 + a * 36, 4, 32, 32)) {
-				ItemStack s = playerInventory.slots.get(a).stack;
-				playerInventory.slots.get(a).stack = cursorSlot;
-				cursorSlot = s;
+				
+				if (button == 1) {
+					ItemStack s = playerInventory.slots.get(a).stack;
+					
+					if (cursorSlot != null && s != null && cursorSlot.item == s.item) {
+						
+						if (s.count + cursorSlot.count > s.item.maxStackSize) {
+							playerInventory.slots.get(a).stack.count = s.item.maxStackSize;
+							cursorSlot.count = s.item.maxStackSize + cursorSlot.count - s.count;
+						} else {
+							s.count += cursorSlot.count;
+							cursorSlot = null;
+						}
+					} else {
+						playerInventory.slots.get(a).stack = cursorSlot;
+						cursorSlot = s;
+					}
+				}
 				return true;
 			}
 		}
