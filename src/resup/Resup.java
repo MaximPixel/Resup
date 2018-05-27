@@ -91,8 +91,6 @@ public class Resup implements IEngineInterface {
 			if (currentSlot >= 10) {
 				currentSlot = 0;
 			}
-			
-			playerInventory.slots.get(1).stack.count++;
 		}
 	}
 
@@ -136,7 +134,7 @@ public class Resup implements IEngineInterface {
 			}
 			ItemStack stack = playerInventory.slots.get(a).stack;
 			
-			if (stack != null) {
+			if (stack != null && stack.item != Items.AIR_TILE) {
 				
 				drawItem(graphics, 4 + a * 36, 4, stack);
 			}

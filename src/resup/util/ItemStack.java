@@ -1,12 +1,13 @@
 package resup.util;
 
+import resup.init.Items;
 import resup.init.Tiles;
 import resup.item.Item;
 import resup.tile.Tile;
 
 public class ItemStack {
 	
-	public static final ItemStack NULL = new ItemStack(Tiles.AIR, 0);
+	public static final ItemStack NULL = new ItemStack(Items.AIR_TILE, 0);
 	
 	public Item item;
 	public int count;
