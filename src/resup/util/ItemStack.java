@@ -7,8 +7,6 @@ import resup.tile.Tile;
 
 public class ItemStack {
 	
-	public static final ItemStack NULL = new ItemStack(Items.AIR_TILE, 0);
-	
 	public Item item;
 	public int count;
 	
@@ -21,12 +19,28 @@ public class ItemStack {
 		this(tile.getTileItem(), count);
 	}
 	
+	public static ItemStack getEmpty() {
+		return new ItemStack(Items.AIR_TILE, 0);
+	}
+	
+	public void addCount(int count) {
+		setCount(this.count + count);
+	}
+	
+	public void setCount(int count) {
+		this.count = count;
+		if (count <= 0) {
+			count = 0;
+			item = getEmpty().item;
+		}
+	}
+	
 	public boolean isEmpty() {
-		return item == NULL.item;
+		return item == getEmpty().item;
 	}
 	
 	public void setEmpty() {
-		item = NULL.item;
+		item = getEmpty().item;
 		count = 0;
 	}
 	
@@ -36,7 +50,11 @@ public class ItemStack {
 			count = 0;
 		}
 		if (count == 0) {
-			item = NULL.item;
+			item = getEmpty().item;
 		}
+	}
+	
+	public String toString() {
+		return item.name + " X " + count;
 	}
 }

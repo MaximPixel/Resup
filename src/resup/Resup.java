@@ -42,7 +42,7 @@ public class Resup implements IEngineInterface {
 	public static InventoryPlayer playerInventory;
 	public static int currentSlot = 0;
 	
-	public static ItemStack cursorSlot = null;
+	public static ItemStack cursorSlot;
 	
 	public static void main(String... args) {
 		
@@ -51,6 +51,8 @@ public class Resup implements IEngineInterface {
 		
 		Tiles.init();
 		Items.init();
+		
+		cursorSlot = ItemStack.getEmpty();
 		
 		playerInventory = new InventoryPlayer();
 		
@@ -140,7 +142,7 @@ public class Resup implements IEngineInterface {
 			}
 		}
 		
-		if (cursorSlot != null) {
+		if (!cursorSlot.isEmpty()) {
 			drawItem(graphics, mp.x, mp.y, cursorSlot);
 		}
 	}
@@ -149,23 +151,37 @@ public class Resup implements IEngineInterface {
 		for (int a = 0; a < 10; a++) {
 			if (EngineMath.collide(mp.x, mp.y, 4 + a * 36, 4, 32, 32)) {
 				
+				ItemStack s = playerInventory.slots.get(a).stack;
+				
 				if (button == 1) {
-					ItemStack s = playerInventory.slots.get(a).stack;
-					
-					if (cursorSlot != null && s != null && cursorSlot.item == s.item) {
+					if (!cursorSlot.isEmpty() && !s.isEmpty() && cursorSlot.item == s.item) {
 						
 						if (s.count + cursorSlot.count > s.item.maxStackSize) {
 							playerInventory.slots.get(a).stack.count = s.item.maxStackSize;
-							cursorSlot.count = s.item.maxStackSize + cursorSlot.count - s.count;
+							//cursorSlot.count = s.item.maxStackSize + cursorSlot.count - s.count;
 						} else {
-							s.count += cursorSlot.count;
-							cursorSlot = null;
+							s.addCount(cursorSlot.count);
+							
+							cursorSlot.setEmpty();
 						}
 					} else {
 						playerInventory.slots.get(a).stack = cursorSlot;
 						cursorSlot = s;
 					}
 				}
+				
+				if (button == 3) {
+					if (cursorSlot.isEmpty() && !s.isEmpty()) {
+						int c1 = (int) Math.floor(s.count / 2D);
+						int c2 = (int) Math.ceil(s.count / 2D);
+						
+						s.setCount(c1);
+						
+						cursorSlot.setCount(c2);
+						cursorSlot.item = s.item;
+					}
+				}
+				
 				return true;
 			}
 		}
