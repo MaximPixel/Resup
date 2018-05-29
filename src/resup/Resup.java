@@ -57,8 +57,8 @@ public class Resup implements IEngineInterface {
 		playerInventory = new InventoryPlayer();
 		
 		playerInventory.slots.get(1).stack = new ItemStack(Items.PICKAXE, 1);
-		playerInventory.slots.get(0).stack = new ItemStack(Items.BRICK_TILE, 1);
-		playerInventory.slots.get(2).stack = new ItemStack(Items.BRICK_TILE, 10);
+		playerInventory.slots.get(0).stack = new ItemStack(Items.BRICK_TILE, 2);
+		playerInventory.slots.get(2).stack = new ItemStack(Items.BRICK_TILE, 9);
 		
 		world = new World();
 		world.addEntity(new EntityPlayer(), 0D, 0D);
@@ -157,8 +157,9 @@ public class Resup implements IEngineInterface {
 					if (!cursorSlot.isEmpty() && !s.isEmpty() && cursorSlot.item == s.item) {
 						
 						if (s.count + cursorSlot.count > s.item.maxStackSize) {
+							int c = s.count + cursorSlot.count;
 							playerInventory.slots.get(a).stack.count = s.item.maxStackSize;
-							//cursorSlot.count = s.item.maxStackSize + cursorSlot.count - s.count;
+							cursorSlot.count = c - s.item.maxStackSize;
 						} else {
 							s.addCount(cursorSlot.count);
 							
