@@ -21,6 +21,10 @@ public class KeyBinding {
 		return input.isKey(currentKey);
 	}
 	
+	public boolean isKeyDown(EngineInput input) {
+		return input.isKeyDown(currentKey);
+	}
+	
 	public boolean isKeyReal(EngineInput input) {
 		return input.isKeyReal(currentKey);
 	}

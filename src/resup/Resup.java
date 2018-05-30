@@ -52,6 +52,13 @@ public class Resup implements IEngineInterface {
 		Tiles.init();
 		Items.init();
 		
+		init();
+		
+		mpe.start(new Resup());
+		input = mpe.thread.getEngineInput();
+	}
+	
+	public static void init() {
 		cursorSlot = ItemStack.getEmpty();
 		
 		playerInventory = new InventoryPlayer();
@@ -62,13 +69,8 @@ public class Resup implements IEngineInterface {
 		
 		world = new World();
 		world.addEntity(new EntityPlayer(), 0D, 0D);
-		
-		//System.out.println(Tiles.getTileFromId(1));
-		
-		mpe.start(new Resup());
-		input = mpe.thread.getEngineInput();
 	}
-
+	
 	@Override
 	public void updateLoop() {
 		Point mp = input.getMousePos();
@@ -92,6 +94,28 @@ public class Resup implements IEngineInterface {
 			currentSlot++;
 			if (currentSlot >= 10) {
 				currentSlot = 0;
+			}
+		}
+		
+		for (int a = 0; a < 10; a++) {
+			if (Settings.CURRENT_SLOT_ARRAY[a].isKeyDown(input)) {
+				if (input.isKey(KeyEvent.VK_SHIFT)) {
+					ItemStack s = playerInventory.slots.get(a).stack;
+					playerInventory.slots.get(a).stack = playerInventory.slots.get(currentSlot).stack;
+					playerInventory.slots.get(currentSlot).stack = s;
+				} else if (input.isKey(KeyEvent.VK_CONTROL)) {
+					if (!playerInventory.slots.get(currentSlot).stack.isEmpty() && (playerInventory.slots.get(a).stack.isEmpty() || playerInventory.slots.get(a).stack.item == playerInventory.slots.get(currentSlot).stack.item)) {
+						playerInventory.slots.get(a).stack.item = playerInventory.slots.get(currentSlot).stack.item;
+						
+						if (playerInventory.slots.get(a).stack.count + 1 <= playerInventory.slots.get(a).stack.item.maxStackSize) {
+							playerInventory.slots.get(a).stack.addCount(1);
+							playerInventory.slots.get(currentSlot).stack.addCount(-1);
+						}
+					}
+				} else {
+					currentSlot = a;
+				}
+				break;
 			}
 		}
 	}
@@ -180,6 +204,14 @@ public class Resup implements IEngineInterface {
 						
 						cursorSlot.setCount(c2);
 						cursorSlot.item = s.item;
+					}
+					if (!cursorSlot.isEmpty() && (s.isEmpty() || cursorSlot.item == s.item)) {
+						s.item = cursorSlot.item;
+						
+						if (s.count + 1 <= s.item.maxStackSize) {
+							s.addCount(1);
+							cursorSlot.addCount(-1);
+						}
 					}
 				}
 				
