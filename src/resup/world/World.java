@@ -86,4 +86,11 @@ public class World {
 	public boolean setTile(TilePos pos, Tile tile) {
 		return chunk.setTile(pos.x, pos.y, tile);
 	}
+	
+	public Tile getTile(double x, double y) {
+		int tx = (int) (x / 32D);
+		int ty = (int) (y / 32D);
+		
+		return getTile(new TilePos(tx, ty));
+	}
 }

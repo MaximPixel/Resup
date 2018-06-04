@@ -15,11 +15,13 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
 import mp.math.TilePos;
+import mpengine.EngineCamera;
 import mpengine.EngineFiles;
 import mpengine.EngineInput;
 import mpengine.EngineMath;
 import mpengine.IEngineInterface;
 import mpengine.MPEngineObject;
+import resup.entity.Entity;
 import resup.entity.EntityPlayer;
 import resup.init.Items;
 import resup.init.Tiles;
@@ -34,11 +36,13 @@ public class Resup implements IEngineInterface {
 	
 	public static MPEngineObject mpe = new MPEngineObject();
 	public static EngineInput input;
+	public static EngineCamera camera = new EngineCamera(mpe, 0F, 0F);
 	
 	public static HashMap<String, BufferedImage> images = new HashMap();
 	
 	public static World world;
 	
+	public static EntityPlayer player;
 	public static InventoryPlayer playerInventory;
 	public static int currentSlot = 0;
 	
@@ -58,6 +62,7 @@ public class Resup implements IEngineInterface {
 		input = mpe.thread.getEngineInput();
 	}
 	
+	
 	public static void init() {
 		cursorSlot = ItemStack.getEmpty();
 		
@@ -68,7 +73,7 @@ public class Resup implements IEngineInterface {
 		playerInventory.slots.get(2).stack = new ItemStack(Items.BRICK_TILE, 9);
 		
 		world = new World();
-		world.addEntity(new EntityPlayer(), 0D, 0D);
+		world.addEntity(player = new EntityPlayer(), 0D, 0D);
 	}
 	
 	@Override
@@ -118,6 +123,55 @@ public class Resup implements IEngineInterface {
 				break;
 			}
 		}
+		
+		int mx = 0;
+		int my = 0;
+		
+		if (Settings.LEFT_MOVE.isKey(input)) {
+			mx--;
+		}
+		
+		if (Settings.UP_MOVE.isKey(input)) {
+			my--;
+		}
+		
+		if (Settings.RIGHT_MOVE.isKey(input)) {
+			mx++;
+		}
+		
+		if (Settings.DOWN_MOVE.isKey(input)) {
+			my++;
+		}
+		
+		if (mx != 0) {
+			double cx1 = player.xPos + 15 + 16 * mx;
+			double cy1 = player.yPos;
+			double cx2 = player.xPos + 15 + 16 * mx;
+			double cy2 = player.yPos + 31;
+			
+			Tile t1 = world.getTile(cx1 + mx, cy1);
+			Tile t2 = world.getTile(cx2 + mx, cy2);
+			
+			if (t1 == Tiles.AIR && t2 == Tiles.AIR) {
+				player.xPos += mx;
+			}
+		}
+		
+		if (my != 0) {
+			double cx1 = player.xPos;
+			double cy1 = player.yPos + 15 + 16 * my;
+			double cx2 = player.xPos + 31;
+			double cy2 = player.yPos + 15 + 16 * my;
+			
+			Tile t1 = world.getTile(cx1, cy1 + my);
+			Tile t2 = world.getTile(cx2, cy2 + my);
+			
+			if (t1 == Tiles.AIR && t2 == Tiles.AIR) {
+				player.yPos += my;
+			}
+		}
+		
+		world.update();
 	}
 
 	@Override
@@ -164,6 +218,11 @@ public class Resup implements IEngineInterface {
 				
 				drawItem(graphics, 4 + a * 36, 4, stack);
 			}
+		}
+		
+		for (Entity ent : world.entities) {
+			graphics.setColor(Color.CYAN);
+			graphics.fillRect((int)ent.xPos, (int)ent.yPos, 32, 32);
 		}
 		
 		if (!cursorSlot.isEmpty()) {
