@@ -3,11 +3,12 @@ package resup.init;
 import java.util.ArrayList;
 
 import resup.item.Item;
+import resup.item.ItemPickaxe;
 import resup.item.ItemTile;
 
 public class Items {
 	
-	public static final Item PICKAXE = new Item("pickaxe");
+	public static final Item PICKAXE = new ItemPickaxe("pickaxe");
 	
 	public static final ItemTile AIR_TILE = new ItemTile(Tiles.AIR);
 	public static final ItemTile BRICK_TILE = new ItemTile(Tiles.BRICK);

@@ -23,15 +23,20 @@ public class ItemStack {
 		return new ItemStack(Items.AIR_TILE, 0);
 	}
 	
-	public void addCount(int count) {
-		setCount(this.count + count);
+	public int addCount(int count) {
+		if (count + this.count > item.maxStackSize) {
+			setCount(item.maxStackSize);
+			return (count + this.count) - item.maxStackSize;
+		} else {
+			setCount(this.count + count);
+		}
+		return 0;
 	}
 	
 	public void setCount(int count) {
 		this.count = count;
 		if (count <= 0) {
-			count = 0;
-			item = getEmpty().item;
+			setEmpty();
 		}
 	}
 	

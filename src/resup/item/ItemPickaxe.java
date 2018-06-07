@@ -7,20 +7,18 @@ import resup.tile.Tile;
 import resup.util.ItemStack;
 import resup.world.World;
 
-public class ItemTile extends Item {
+public class ItemPickaxe extends Item {
 
-	public Tile tile;
-	
-	public ItemTile(Tile tile) {
-		super(tile.name);
-		this.tile = tile;
+	public ItemPickaxe(String name) {
+		super(name);
 	}
 	
 	@Override
 	public boolean onUse(EntityPlayer player, World world, TilePos pos, ItemStack stack) {
-		if (world.getTile(pos) == Tiles.AIR) {
-			if (world.setTile(pos, tile)) {
-				stack.shrink();
+		if (world.getTile(pos) != Tiles.AIR) {
+			Tile tile = world.getTile(pos);
+			if (world.setTile(pos, Tiles.AIR)) {
+				player.inventory.addToInventory(new ItemStack(tile.getTileItem(), 1));
 				return true;
 			}
 		}

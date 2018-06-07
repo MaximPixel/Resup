@@ -43,7 +43,6 @@ public class Resup implements IEngineInterface {
 	public static World world;
 	
 	public static EntityPlayer player;
-	public static InventoryPlayer playerInventory;
 	public static int currentSlot = 0;
 	
 	public static ItemStack cursorSlot;
@@ -60,20 +59,20 @@ public class Resup implements IEngineInterface {
 		
 		mpe.start(new Resup());
 		input = mpe.thread.getEngineInput();
+		
+		mpe.frame.getCanvas().requestFocus();
 	}
 	
 	
 	public static void init() {
 		cursorSlot = ItemStack.getEmpty();
 		
-		playerInventory = new InventoryPlayer();
-		
-		playerInventory.slots.get(1).stack = new ItemStack(Items.PICKAXE, 1);
-		playerInventory.slots.get(0).stack = new ItemStack(Items.BRICK_TILE, 2);
-		playerInventory.slots.get(2).stack = new ItemStack(Items.BRICK_TILE, 9);
-		
 		world = new World();
 		world.addEntity(player = new EntityPlayer(), 0D, 0D);
+		
+		player.inventory.slots.get(1).stack = new ItemStack(Items.PICKAXE, 1);
+		player.inventory.slots.get(0).stack = new ItemStack(Items.BRICK_TILE, 2);
+		player.inventory.slots.get(2).stack = new ItemStack(Items.BRICK_TILE, 9);
 	}
 	
 	@Override
@@ -85,11 +84,12 @@ public class Resup implements IEngineInterface {
 				boolean f = clickGui(mp, a);
 				
 				if (a == 1 && !f) {
-					ItemStack stack = playerInventory.slots.get(currentSlot).stack;
+					ItemStack stack = player.inventory.slots.get(currentSlot).stack;
 					
 					if (stack != null && !stack.isEmpty()) {
-						TilePos pos = new TilePos(mp.x / 32, mp.y / 32);
-						stack.item.onUse(world, pos, stack);
+						Point mpp = camera.screenToWorldPoint(new Point(mp.x, mp.y));
+						TilePos pos = new TilePos(mpp.x / 32, mpp.y / 32);
+						stack.item.onUse(player, world, pos, stack);
 					}
 				}
 			}
@@ -105,16 +105,16 @@ public class Resup implements IEngineInterface {
 		for (int a = 0; a < 10; a++) {
 			if (Settings.CURRENT_SLOT_ARRAY[a].isKeyDown(input)) {
 				if (input.isKey(KeyEvent.VK_SHIFT)) {
-					ItemStack s = playerInventory.slots.get(a).stack;
-					playerInventory.slots.get(a).stack = playerInventory.slots.get(currentSlot).stack;
-					playerInventory.slots.get(currentSlot).stack = s;
+					ItemStack s = player.inventory.slots.get(a).stack;
+					player.inventory.slots.get(a).stack = player.inventory.slots.get(currentSlot).stack;
+					player.inventory.slots.get(currentSlot).stack = s;
 				} else if (input.isKey(KeyEvent.VK_CONTROL)) {
-					if (!playerInventory.slots.get(currentSlot).stack.isEmpty() && (playerInventory.slots.get(a).stack.isEmpty() || playerInventory.slots.get(a).stack.item == playerInventory.slots.get(currentSlot).stack.item)) {
-						playerInventory.slots.get(a).stack.item = playerInventory.slots.get(currentSlot).stack.item;
+					if (!player.inventory.slots.get(currentSlot).stack.isEmpty() && (player.inventory.slots.get(a).stack.isEmpty() || player.inventory.slots.get(a).stack.item == player.inventory.slots.get(currentSlot).stack.item)) {
+						player.inventory.slots.get(a).stack.item = player.inventory.slots.get(currentSlot).stack.item;
 						
-						if (playerInventory.slots.get(a).stack.count + 1 <= playerInventory.slots.get(a).stack.item.maxStackSize) {
-							playerInventory.slots.get(a).stack.addCount(1);
-							playerInventory.slots.get(currentSlot).stack.addCount(-1);
+						if (player.inventory.slots.get(a).stack.count + 1 <= player.inventory.slots.get(a).stack.item.maxStackSize) {
+							player.inventory.slots.get(a).stack.addCount(1);
+							player.inventory.slots.get(currentSlot).stack.addCount(-1);
 						}
 					}
 				} else {
@@ -143,33 +143,11 @@ public class Resup implements IEngineInterface {
 			my++;
 		}
 		
-		if (mx != 0) {
-			double cx1 = player.xPos + 15 + 16 * mx;
-			double cy1 = player.yPos;
-			double cx2 = player.xPos + 15 + 16 * mx;
-			double cy2 = player.yPos + 31;
-			
-			Tile t1 = world.getTile(cx1 + mx, cy1);
-			Tile t2 = world.getTile(cx2 + mx, cy2);
-			
-			if (t1 == Tiles.AIR && t2 == Tiles.AIR) {
-				player.xPos += mx;
-			}
-		}
+		player.xPos += mx;
+		player.yPos += my;
 		
-		if (my != 0) {
-			double cx1 = player.xPos;
-			double cy1 = player.yPos + 15 + 16 * my;
-			double cx2 = player.xPos + 31;
-			double cy2 = player.yPos + 15 + 16 * my;
-			
-			Tile t1 = world.getTile(cx1, cy1 + my);
-			Tile t2 = world.getTile(cx2, cy2 + my);
-			
-			if (t1 == Tiles.AIR && t2 == Tiles.AIR) {
-				player.yPos += my;
-			}
-		}
+		camera.cameraX = (float) player.xPos;
+		camera.cameraY = (float) player.yPos;
 		
 		world.update();
 	}
@@ -186,6 +164,15 @@ public class Resup implements IEngineInterface {
 		
 		graphics.setColor(Color.GRAY);
 		graphics.fillRect(0, 0, width, height);
+		
+		float tx = camera.getCameraTranslateX();
+		float ty = camera.getCameraTranslateY();
+		
+		graphics.translate(tx, ty);
+		
+		graphics.setColor(Color.BLACK);
+		graphics.drawLine(0, 0, 640, 0);
+		graphics.drawLine(0, 0, 0, 640);
 		
 		for (int a = 0; a < 16; a++) {
 			for (int b = 0; b < 16; b++) {
@@ -205,6 +192,13 @@ public class Resup implements IEngineInterface {
 			}
 		}
 		
+		for (Entity ent : world.entities) {
+			graphics.setColor(Color.CYAN);
+			graphics.fillRect((int)ent.xPos, (int)ent.yPos, 32, 32);
+		}
+		
+		graphics.translate(-tx, -ty);
+		
 		for (int a = 0; a < 10; a++) {
 			graphics.setColor(Color.DARK_GRAY);
 			if (currentSlot == a) {
@@ -212,17 +206,12 @@ public class Resup implements IEngineInterface {
 			} else {
 				graphics.fillRect(4 + a * 36, 4, 32, 32);
 			}
-			ItemStack stack = playerInventory.slots.get(a).stack;
+			ItemStack stack = player.inventory.slots.get(a).stack;
 			
 			if (stack != null && stack.item != Items.AIR_TILE) {
 				
 				drawItem(graphics, 4 + a * 36, 4, stack);
 			}
-		}
-		
-		for (Entity ent : world.entities) {
-			graphics.setColor(Color.CYAN);
-			graphics.fillRect((int)ent.xPos, (int)ent.yPos, 32, 32);
 		}
 		
 		if (!cursorSlot.isEmpty()) {
@@ -234,14 +223,14 @@ public class Resup implements IEngineInterface {
 		for (int a = 0; a < 10; a++) {
 			if (EngineMath.collide(mp.x, mp.y, 4 + a * 36, 4, 32, 32)) {
 				
-				ItemStack s = playerInventory.slots.get(a).stack;
+				ItemStack s = player.inventory.slots.get(a).stack;
 				
 				if (button == 1) {
 					if (!cursorSlot.isEmpty() && !s.isEmpty() && cursorSlot.item == s.item) {
 						
 						if (s.count + cursorSlot.count > s.item.maxStackSize) {
 							int c = s.count + cursorSlot.count;
-							playerInventory.slots.get(a).stack.count = s.item.maxStackSize;
+							player.inventory.slots.get(a).stack.count = s.item.maxStackSize;
 							cursorSlot.count = c - s.item.maxStackSize;
 						} else {
 							s.addCount(cursorSlot.count);
@@ -249,7 +238,7 @@ public class Resup implements IEngineInterface {
 							cursorSlot.setEmpty();
 						}
 					} else {
-						playerInventory.slots.get(a).stack = cursorSlot;
+						player.inventory.slots.get(a).stack = cursorSlot;
 						cursorSlot = s;
 					}
 				}

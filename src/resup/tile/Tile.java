@@ -41,6 +41,6 @@ public class Tile {
 	}
 	
 	public Item getTileItem() {
-		return Items.PICKAXE;
+		return Items.getItemByName(name);
 	}
 }
