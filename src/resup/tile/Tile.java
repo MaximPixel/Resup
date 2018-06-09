@@ -33,7 +33,9 @@ public class Tile {
 	}
 	
 	public void onBreak(World world, TilePos pos) {
-		world.removeTileEntity(pos);
+		if (createTileEntity(world, pos) != null) {
+			world.removeTileEntity(pos);
+		}
 	}
 	
 	public TileEntity createTileEntity(World world, TilePos pos) {

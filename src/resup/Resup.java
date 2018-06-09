@@ -30,6 +30,7 @@ import resup.item.Item;
 import resup.tile.Tile;
 import resup.tileentity.TileEntity;
 import resup.util.ItemStack;
+import resup.world.Chunk;
 import resup.world.World;
 
 public class Resup implements IEngineInterface {
@@ -124,27 +125,7 @@ public class Resup implements IEngineInterface {
 			}
 		}
 		
-		int mx = 0;
-		int my = 0;
-		
-		if (Settings.LEFT_MOVE.isKey(input)) {
-			mx--;
-		}
-		
-		if (Settings.UP_MOVE.isKey(input)) {
-			my--;
-		}
-		
-		if (Settings.RIGHT_MOVE.isKey(input)) {
-			mx++;
-		}
-		
-		if (Settings.DOWN_MOVE.isKey(input)) {
-			my++;
-		}
-		
-		player.xPos += mx;
-		player.yPos += my;
+		player.controll();
 		
 		camera.cameraX = (float) player.xPos;
 		camera.cameraY = (float) player.yPos;
@@ -165,14 +146,22 @@ public class Resup implements IEngineInterface {
 		graphics.setColor(Color.GRAY);
 		graphics.fillRect(0, 0, width, height);
 		
-		float tx = camera.getCameraTranslateX();
-		float ty = camera.getCameraTranslateY();
+		int tx = (int)Math.floor(camera.getCameraTranslateX());
+		int ty = (int)Math.floor(camera.getCameraTranslateY());
 		
 		graphics.translate(tx, ty);
 		
-		graphics.setColor(Color.BLACK);
-		graphics.drawLine(0, 0, 640, 0);
-		graphics.drawLine(0, 0, 0, 640);
+		for (Chunk ch : world.chunks.values()) {
+			graphics.setColor(Color.BLACK);
+			int ttx = ch.pos.chunkX * 32 * 16;
+			int tty = ch.pos.chunkY * 32 * 16;
+			graphics.translate(ttx, tty);
+			graphics.drawLine(0, 0, 512, 0);
+			graphics.drawLine(0, 0, 0, 512);
+			graphics.drawLine(512, 0, 512, 512);
+			graphics.drawLine(0, 512, 512, 512);
+			graphics.translate(-ttx, -tty);
+		}
 		
 		for (int a = 0; a < 16; a++) {
 			for (int b = 0; b < 16; b++) {

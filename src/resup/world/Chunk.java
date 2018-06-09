@@ -3,19 +3,20 @@ package resup.world;
 import mp.math.TilePos;
 import resup.init.Tiles;
 import resup.tile.Tile;
+import resup.util.ChunkPos;
 import resup.util.DataInput;
 import resup.util.DataOutput;
 
 public class Chunk {
 	
 	public World world;
-	public int chunkX, chunkY;
+	public ChunkPos pos;
 	public int[] tiles = new int[16 * 16];
+	public boolean remove = false;
 	
-	public Chunk(World world, int chunkX, int chunkY) {
+	public Chunk(World world, ChunkPos pos) {
 		this.world = world;
-		this.chunkX = chunkX;
-		this.chunkY = chunkY;
+		this.pos = pos;
 	}
 	
 	public Tile getTile(int x, int y) {
@@ -38,7 +39,7 @@ public class Chunk {
 		if (id == -1) {
 			return false;
 		}
-		tile.onPlace(world, new TilePos(chunkX * 16 + x, chunkY * 16 + y));
+		tile.onPlace(world, new TilePos(pos.chunkX * 16 + x, pos.chunkY * 16 + y));
 		return setTileId(x, y, id);
 	}
 	

@@ -4,13 +4,19 @@ import mpengine.EngineInput;
 import resup.Resup;
 import resup.Settings;
 import resup.inventory.InventoryPlayer;
+import resup.util.ChunkPos;
 
 public class EntityPlayer extends Entity {
 	
 	public InventoryPlayer inventory;
+	public ChunkPos chunkPos;
+	public ChunkPos lastChunkPos;
 	
 	public EntityPlayer() {
 		inventory = new InventoryPlayer();
+		
+		chunkPos = new ChunkPos(xPos, yPos);
+		lastChunkPos = new ChunkPos(xPos, yPos);
 	}
 	
 	@Override
@@ -38,5 +44,13 @@ public class EntityPlayer extends Entity {
 		if (my != 0) {
 			yPos += my * 2.5D;
 		}
+		
+		chunkPos = new ChunkPos(xPos, yPos);
+		
+		if (!chunkPos.equals(lastChunkPos)) {
+			world.onPlayerChunkJump(this);
+		}
+		
+		lastChunkPos = chunkPos.clone();
 	}
 }

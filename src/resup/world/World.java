@@ -5,13 +5,16 @@ import java.util.HashMap;
 
 import mp.math.TilePos;
 import resup.entity.Entity;
+import resup.entity.EntityPlayer;
 import resup.init.Tiles;
 import resup.tile.Tile;
 import resup.tileentity.TileEntity;
+import resup.util.ChunkPos;
 
 public class World {
 	
-	public Chunk chunk = new Chunk(this, 0, 0);
+	public HashMap<ChunkPos, Chunk> chunks = new HashMap();
+	public HashMap<ChunkPos, Chunk> newChunks = new HashMap();
 	
 	public ArrayList<Entity> entities = new ArrayList();
 	public ArrayList<Entity> newentities = new ArrayList();
@@ -19,10 +22,23 @@ public class World {
 	public HashMap<TilePos, TileEntity> tileentities = new HashMap();
 	
 	public World() {
-		chunk.setTile(10, 10, Tiles.BRICK);
+		loadChunk(new ChunkPos(0, 0));
 	}
 	
 	public void update() {
+		
+		ArrayList<ChunkPos> deleteChunk = new ArrayList();
+		for (ChunkPos cp : chunks.keySet()) {
+			if (chunks.get(cp).remove) {
+				deleteChunk.add(cp);
+			}
+		}
+		for (ChunkPos c : deleteChunk) {
+			chunks.remove(c);
+		}
+		
+		chunks.putAll(newChunks);
+		newChunks.clear();
 		
 		ArrayList<Entity> deleteEnt = new ArrayList();
 		for (Entity ent : entities) {
@@ -80,10 +96,18 @@ public class World {
 	}
 	
 	public Tile getTile(TilePos pos) {
+		Chunk chunk = getChunk(pos);
+		if (chunk == null) {
+			return Tiles.AIR;
+		}
 		return chunk.getTile(pos.x, pos.y);
 	}
 	
 	public boolean setTile(TilePos pos, Tile tile) {
+		Chunk chunk = getChunk(pos);
+		if (chunk == null) {
+			return false;
+		}
 		return chunk.setTile(pos.x, pos.y, tile);
 	}
 	
@@ -92,5 +116,40 @@ public class World {
 		int ty = (int) (y / 32D);
 		
 		return getTile(new TilePos(tx, ty));
+	}
+	
+	public Chunk getChunk(TilePos pos) {
+		return getChunk(getChunkPos(pos));
+	}
+	
+	public Chunk getChunk(ChunkPos cp) {
+		return chunks.get(cp);
+	}
+	
+	public ChunkPos getChunkPos(TilePos pos) {
+		return new ChunkPos(pos.x / 16, pos.y / 16);
+	}
+	
+	public Chunk loadChunk(ChunkPos cp) {
+		Chunk chunk = new Chunk(this, cp);
+		chunks.put(cp, chunk);
+		return chunk;
+	}
+	
+	public Chunk unloadChunk(ChunkPos cp) {
+		Chunk chunk = chunks.get(cp);
+		if (chunk != null || chunks.containsKey(cp)) {
+			chunk.remove = true;
+			onChunkUnload();
+		}
+		return null;
+	}
+	
+	public void onChunkUnload() {
+		
+	}
+	
+	public void onPlayerChunkJump(EntityPlayer player) {
+		
 	}
 }
