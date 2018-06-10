@@ -9,7 +9,7 @@ public class ChunkPos implements Serializable {
 	public int chunkX, chunkY;
 	
 	public ChunkPos(double x, double y) {
-		this((int)(x / 32D / 16D), (int)(y / 32D / 16D));
+		this((int)Math.floor(x / 32D / 16D), (int)Math.floor(y / 32D / 16D));
 	}
 	
 	public ChunkPos(int chunkX, int chunkY) {

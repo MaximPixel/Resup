@@ -48,7 +48,7 @@ public class EntityPlayer extends Entity {
 		chunkPos = new ChunkPos(xPos, yPos);
 		
 		if (!chunkPos.equals(lastChunkPos)) {
-			world.onPlayerChunkJump(this);
+			world.onPlayerChunkJump(this, chunkPos);
 		}
 		
 		lastChunkPos = chunkPos.clone();

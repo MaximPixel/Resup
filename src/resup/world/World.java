@@ -131,9 +131,12 @@ public class World {
 	}
 	
 	public Chunk loadChunk(ChunkPos cp) {
-		Chunk chunk = new Chunk(this, cp);
-		chunks.put(cp, chunk);
-		return chunk;
+		if (!chunks.containsKey(cp)) {
+			Chunk chunk = new Chunk(this, cp);
+			chunks.put(cp, chunk);
+			return chunk;
+		}
+		return null;
 	}
 	
 	public Chunk unloadChunk(ChunkPos cp) {
@@ -149,7 +152,8 @@ public class World {
 		
 	}
 	
-	public void onPlayerChunkJump(EntityPlayer player) {
-		
+	public void onPlayerChunkJump(EntityPlayer player, ChunkPos cp) {
+		loadChunk(cp);
+		System.out.println(cp);
 	}
 }
