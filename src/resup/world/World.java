@@ -14,65 +14,50 @@ import resup.util.ChunkPos;
 public class World {
 	
 	public HashMap<ChunkPos, Chunk> chunks = new HashMap();
-	public HashMap<ChunkPos, Chunk> newChunks = new HashMap();
 	
 	public ArrayList<Entity> entities = new ArrayList();
-	public ArrayList<Entity> newentities = new ArrayList();
-	public HashMap<TilePos, TileEntity> newtileentities = new HashMap();
 	public HashMap<TilePos, TileEntity> tileentities = new HashMap();
 	
 	public World() {
-		loadChunk(new ChunkPos(0, 0));
+		
 	}
 	
 	public void update() {
 		
-		ArrayList<ChunkPos> deleteChunk = new ArrayList();
-		for (ChunkPos cp : chunks.keySet()) {
-			if (chunks.get(cp).remove) {
-				deleteChunk.add(cp);
+		for (Chunk chunk : ((HashMap<ChunkPos, Chunk>)chunks.clone()).values()) {
+			if (chunk.remove) {
+				chunks.remove(chunk);
 			}
 		}
-		for (ChunkPos c : deleteChunk) {
-			chunks.remove(c);
-		}
 		
-		chunks.putAll(newChunks);
-		newChunks.clear();
-		
-		ArrayList<Entity> deleteEnt = new ArrayList();
-		for (Entity ent : entities) {
+		for (Entity ent : (ArrayList<Entity>)entities.clone()) {
 			if (ent.remove) {
-				deleteEnt.add(ent);
+				entities.remove(ent);
+			} else {
+				ent.update();
 			}
 		}
-		entities.removeAll(deleteEnt);
 		
-		ArrayList<TileEntity> deleteTE = new ArrayList();
-		for (TileEntity te : tileentities.values()) {
+		for (TileEntity te : ((HashMap<TilePos, TileEntity>)tileentities.clone()).values()) {
 			if (te.remove) {
-				deleteTE.add(te);
+				tileentities.remove(te);
+			} else {
+				te.update();
 			}
 		}
-		tileentities.values().removeAll(deleteTE);
-		
-		entities.addAll(newentities);
-		newentities.clear();
-		tileentities.putAll(newtileentities);
-		newtileentities.clear();
 	}
 	
 	public void addEntity(Entity ent, double x, double y) {
 		ent.world = this;
 		ent.xPos = x;
 		ent.yPos = y;
-		newentities.add(ent);
+		entities.add(ent);
 	}
 	
 	public void addTileEntity(TileEntity te, TilePos pos) {
 		te.pos = pos;
 		te.world = this;
-		newtileentities.put(pos, te);
+		tileentities.put(pos, te);
 	}
 	
 	public void removeTileEntity(TilePos pos) {
@@ -81,7 +66,7 @@ public class World {
 			te.remove = true;
 			return;
 		}
-		te = newtileentities.get(pos);
+		te = tileentities.get(pos);
 		if (te != null) {
 			te.remove = true;
 		}
@@ -92,7 +77,7 @@ public class World {
 		if (te != null) {
 			return te;
 		}
-		return newtileentities.get(pos);
+		return tileentities.get(pos);
 	}
 	
 	public Tile getTile(TilePos pos) {
@@ -131,7 +116,7 @@ public class World {
 	}
 	
 	public Chunk loadChunk(ChunkPos cp) {
-		if (!chunks.containsKey(cp)) {
+		if (chunks.get(cp) == null) {
 			Chunk chunk = new Chunk(this, cp);
 			chunks.put(cp, chunk);
 			return chunk;
@@ -143,17 +128,29 @@ public class World {
 		Chunk chunk = chunks.get(cp);
 		if (chunk != null || chunks.containsKey(cp)) {
 			chunk.remove = true;
-			onChunkUnload();
+			onChunkUnload(chunk);
 		}
 		return null;
 	}
 	
-	public void onChunkUnload() {
-		
+	public void onChunkUnload(Chunk chunk) {
+		System.out.println(chunk.pos);
 	}
 	
 	public void onPlayerChunkJump(EntityPlayer player, ChunkPos cp) {
-		loadChunk(cp);
-		System.out.println(cp);
+		for (ChunkPos cpp : chunks.keySet()) {
+			if (cpp.distance(cp) >= 3) {
+				Chunk chunk = chunks.get(cpp);
+				chunk.remove = true;
+				onChunkUnload(chunk);
+			}
+		}
+		for (int a = 0; a < 3; a++) {
+			for (int b = 0; b < 3; b++) {
+				ChunkPos cpp = new ChunkPos(cp.chunkX - 1 + a, cp.chunkY - 1 + b);
+				System.out.println("" + loadChunk(cp));
+				//System.out.println(cpp);
+			}
+		}
 	}
 }

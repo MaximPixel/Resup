@@ -68,4 +68,9 @@ public class Chunk {
 			}
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return pos + " " + world;
+	}
 }

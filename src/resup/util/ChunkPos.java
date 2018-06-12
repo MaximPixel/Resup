@@ -2,6 +2,7 @@ package resup.util;
 
 import java.io.Serializable;
 
+import mpengine.EngineMath;
 import resup.entity.EntityPlayer;
 
 public class ChunkPos implements Serializable {
@@ -15,6 +16,10 @@ public class ChunkPos implements Serializable {
 	public ChunkPos(int chunkX, int chunkY) {
 		this.chunkX = chunkX;
 		this.chunkY = chunkY;
+	}
+	
+	public double distance(ChunkPos cp) {
+		return EngineMath.distance(chunkX, chunkY, cp.chunkX, cp.chunkY);
 	}
 	
 	@Override

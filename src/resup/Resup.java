@@ -29,6 +29,7 @@ import resup.inventory.InventoryPlayer;
 import resup.item.Item;
 import resup.tile.Tile;
 import resup.tileentity.TileEntity;
+import resup.util.ChunkPos;
 import resup.util.ItemStack;
 import resup.world.Chunk;
 import resup.world.World;
@@ -70,6 +71,7 @@ public class Resup implements IEngineInterface {
 		
 		world = new World();
 		world.addEntity(player = new EntityPlayer(), 0D, 0D);
+		world.onPlayerChunkJump(player, new ChunkPos(0, 0));
 		
 		player.inventory.slots.get(1).stack = new ItemStack(Items.PICKAXE, 1);
 		player.inventory.slots.get(0).stack = new ItemStack(Items.BRICK_TILE, 2);

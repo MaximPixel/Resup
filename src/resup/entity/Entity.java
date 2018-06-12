@@ -15,4 +15,8 @@ public class Entity {
 	public void controll() {
 		
 	}
+	
+	public void update() {
+		
+	}
 }
