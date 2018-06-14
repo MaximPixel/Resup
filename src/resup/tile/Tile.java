@@ -2,7 +2,7 @@ package resup.tile;
 
 import java.awt.Color;
 
-import mp.math.TilePos;
+import resup.util.TilePos;
 import resup.init.Items;
 import resup.item.Item;
 import resup.item.ItemTile;

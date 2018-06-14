@@ -1,6 +1,6 @@
 package resup.item;
 
-import mp.math.TilePos;
+import resup.util.TilePos;
 import resup.entity.EntityPlayer;
 import resup.init.Tiles;
 import resup.tile.Tile;
@@ -21,6 +21,7 @@ public class ItemTile extends Item {
 		if (world.getTile(pos) == Tiles.AIR) {
 			if (world.setTile(pos, tile)) {
 				stack.shrink();
+				System.out.println(pos);
 				return true;
 			}
 		}

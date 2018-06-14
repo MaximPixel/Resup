@@ -14,7 +14,7 @@ import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
-import mp.math.TilePos;
+import resup.util.TilePos;
 import mpengine.EngineCamera;
 import mpengine.EngineFiles;
 import mpengine.EngineInput;
@@ -27,6 +27,7 @@ import resup.init.Items;
 import resup.init.Tiles;
 import resup.inventory.InventoryPlayer;
 import resup.item.Item;
+import resup.item.ItemTile;
 import resup.tile.Tile;
 import resup.tileentity.TileEntity;
 import resup.util.ChunkPos;
@@ -67,6 +68,8 @@ public class Resup implements IEngineInterface {
 	
 	
 	public static void init() {
+		//camera.cameraZoom = 0.5F;
+		
 		cursorSlot = ItemStack.getEmpty();
 		
 		world = new World();
@@ -91,7 +94,7 @@ public class Resup implements IEngineInterface {
 					
 					if (stack != null && !stack.isEmpty()) {
 						Point mpp = camera.screenToWorldPoint(new Point(mp.x, mp.y));
-						TilePos pos = new TilePos(mpp.x / 32, mpp.y / 32);
+						TilePos pos = new TilePos((int) Math.floor(mpp.x / 32D), (int) Math.floor(mpp.y / 32D));
 						stack.item.onUse(player, world, pos, stack);
 					}
 				}
@@ -127,12 +130,14 @@ public class Resup implements IEngineInterface {
 			}
 		}
 		
-		player.controll();
-		
 		camera.cameraX = (float) player.xPos;
 		camera.cameraY = (float) player.yPos;
 		
 		world.update();
+		
+		player.controll();
+		
+		mpe.frame.setTitle(world.chunks.size() + "");
 	}
 
 	@Override
@@ -142,6 +147,7 @@ public class Resup implements IEngineInterface {
 		int height = canvas.getHeight();
 		
 		Point mp = input.getMousePos();
+		Point mpp = camera.screenToWorldPoint(mp);
 		
 		graphics.setFont(new Font(null, 16, 20));
 		
@@ -152,35 +158,38 @@ public class Resup implements IEngineInterface {
 		int ty = (int)Math.floor(camera.getCameraTranslateY());
 		
 		graphics.translate(tx, ty);
+		graphics.scale(camera.cameraZoom, camera.cameraZoom);
+		
+		TilePos pos = new TilePos((int)Math.floor(mpp.x / 32D), (int)Math.floor(mpp.y / 32D));
+		ChunkPos ppp = new ChunkPos((int)Math.floor(pos.x / 16D), (int)Math.floor(pos.y / 16D));
+		
+		int ctx = pos.toChunkTileX();
+		int cty = pos.toChunkTileY();
+		
+		if (player.inventory.slots.get(currentSlot).stack.item instanceof ItemTile) {
+			graphics.setColor(Color.YELLOW);
+			graphics.drawRect(ppp.chunkX * 16 * 32 + ctx * 32, ppp.chunkY * 16 * 32 + cty * 32, 32, 32);
+		}
 		
 		for (Chunk ch : world.chunks.values()) {
-			graphics.setColor(Color.BLACK);
 			int ttx = ch.pos.chunkX * 32 * 16;
 			int tty = ch.pos.chunkY * 32 * 16;
 			graphics.translate(ttx, tty);
-			graphics.drawLine(0, 0, 512, 0);
-			graphics.drawLine(0, 0, 0, 512);
-			graphics.drawLine(512, 0, 512, 512);
-			graphics.drawLine(0, 512, 512, 512);
-			graphics.translate(-ttx, -tty);
-		}
-		
-		for (int a = 0; a < 16; a++) {
-			for (int b = 0; b < 16; b++) {
-				TilePos p = new TilePos(a, b);
-				
-				Tile t = world.getTile(p);
-				if (t != Tiles.AIR) {
-					graphics.setColor(t.color);
-					graphics.fillRect(a * 32, b * 32, 32, 32);
-				}
-				
-				TileEntity te = world.getTileEntity(p);
-				if (te != null) {
-					graphics.setColor(Color.YELLOW);
-					graphics.drawOval(a * 32, b * 32, 32, 32);
+			
+			for (int a = 0; a < 16; a++) {
+				for (int b = 0; b < 16; b++) {
+					Tile t = ch.getTile(a, b);
+					if (t != Tiles.AIR) {
+						graphics.setColor(t.color);
+						graphics.fillRect(a * 32, b * 32, 32, 32);
+					}
 				}
 			}
+			
+			graphics.setColor(Color.BLACK);
+			graphics.drawRect(0, 0, 512, 512);
+			
+			graphics.translate(-ttx, -tty);
 		}
 		
 		for (Entity ent : world.entities) {
@@ -188,6 +197,7 @@ public class Resup implements IEngineInterface {
 			graphics.fillRect((int)ent.xPos, (int)ent.yPos, 32, 32);
 		}
 		
+		graphics.scale(1D / camera.cameraZoom, 1D / camera.cameraZoom);
 		graphics.translate(-tx, -ty);
 		
 		for (int a = 0; a < 10; a++) {

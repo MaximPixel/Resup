@@ -1,6 +1,6 @@
 package resup.item;
 
-import mp.math.TilePos;
+import resup.util.TilePos;
 import resup.entity.EntityPlayer;
 import resup.util.ItemStack;
 import resup.world.World;

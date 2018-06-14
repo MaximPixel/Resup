@@ -1,6 +1,6 @@
 package resup.tileentity;
 
-import mp.math.TilePos;
+import resup.util.TilePos;
 import resup.world.World;
 
 public class TileEntity {

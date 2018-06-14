@@ -1,6 +1,6 @@
 package resup.world;
 
-import mp.math.TilePos;
+import resup.util.TilePos;
 import resup.init.Tiles;
 import resup.tile.Tile;
 import resup.util.ChunkPos;
