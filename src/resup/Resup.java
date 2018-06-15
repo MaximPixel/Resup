@@ -166,7 +166,8 @@ public class Resup implements IEngineInterface {
 		int ctx = pos.toChunkTileX();
 		int cty = pos.toChunkTileY();
 		
-		if (player.inventory.slots.get(currentSlot).stack.item instanceof ItemTile) {
+		ItemStack currentStack = player.inventory.slots.get(currentSlot).stack;
+		if (currentStack.item instanceof ItemTile) {
 			graphics.setColor(Color.YELLOW);
 			int ax = ppp.chunkX * 16 * 32 + ctx * 32;
 			int ay = ppp.chunkY * 16 * 32 + cty * 32;
