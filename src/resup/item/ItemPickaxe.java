@@ -15,8 +15,8 @@ public class ItemPickaxe extends Item {
 	
 	@Override
 	public boolean onUse(EntityPlayer player, World world, TilePos pos, ItemStack stack) {
-		if (world.getTile(pos) != Tiles.AIR) {
-			Tile tile = world.getTile(pos);
+		Tile tile = world.getTile(pos);
+		if (tile != null && tile != Tiles.AIR) {
 			if (world.setTile(pos, Tiles.AIR)) {
 				player.inventory.addToInventory(new ItemStack(tile.getTileItem(), 1));
 				return true;

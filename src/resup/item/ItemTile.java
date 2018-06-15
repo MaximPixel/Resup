@@ -18,10 +18,10 @@ public class ItemTile extends Item {
 	
 	@Override
 	public boolean onUse(EntityPlayer player, World world, TilePos pos, ItemStack stack) {
-		if (world.getTile(pos) == Tiles.AIR) {
+		Tile tile = world.getTile(pos);
+		if (tile != null && tile == Tiles.AIR) {
 			if (world.setTile(pos, tile)) {
 				stack.shrink();
-				System.out.println(pos);
 				return true;
 			}
 		}

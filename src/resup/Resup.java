@@ -161,14 +161,20 @@ public class Resup implements IEngineInterface {
 		graphics.scale(camera.cameraZoom, camera.cameraZoom);
 		
 		TilePos pos = new TilePos((int)Math.floor(mpp.x / 32D), (int)Math.floor(mpp.y / 32D));
-		ChunkPos ppp = new ChunkPos((int)Math.floor(pos.x / 16D), (int)Math.floor(pos.y / 16D));
+		ChunkPos ppp = world.getChunkPos(pos);
 		
 		int ctx = pos.toChunkTileX();
 		int cty = pos.toChunkTileY();
 		
 		if (player.inventory.slots.get(currentSlot).stack.item instanceof ItemTile) {
 			graphics.setColor(Color.YELLOW);
-			graphics.drawRect(ppp.chunkX * 16 * 32 + ctx * 32, ppp.chunkY * 16 * 32 + cty * 32, 32, 32);
+			int ax = ppp.chunkX * 16 * 32 + ctx * 32;
+			int ay = ppp.chunkY * 16 * 32 + cty * 32;
+			graphics.translate(ax, ay);
+			graphics.drawRect(0, 0, 32, 32);
+			
+			graphics.drawString(ctx + " " + cty + " " + ppp + " " + world.getTile(pos).name, 0, 0);
+			graphics.translate(-ax, -ay);
 		}
 		
 		for (Chunk ch : world.chunks.values()) {
@@ -179,7 +185,7 @@ public class Resup implements IEngineInterface {
 			for (int a = 0; a < 16; a++) {
 				for (int b = 0; b < 16; b++) {
 					Tile t = ch.getTile(a, b);
-					if (t != Tiles.AIR) {
+					if (t != null && t != Tiles.AIR) {
 						graphics.setColor(t.color);
 						graphics.fillRect(a * 32, b * 32, 32, 32);
 					}

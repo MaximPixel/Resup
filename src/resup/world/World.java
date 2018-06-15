@@ -87,7 +87,7 @@ public class World {
 	public Tile getTile(TilePos pos) {
 		Chunk chunk = getChunk(pos);
 		if (chunk == null) {
-			return Tiles.AIR;
+			return null;
 		}
 		return chunk.getTile(pos.toChunkTileX(), pos.toChunkTileX());
 	}
@@ -100,13 +100,6 @@ public class World {
 		return chunk.setTile(pos.toChunkTileX(), pos.toChunkTileY(), tile);
 	}
 	
-	public Tile getTile(double x, double y) {
-		int tx = (int) (x / 32D);
-		int ty = (int) (y / 32D);
-		
-		return getTile(new TilePos(tx, ty));
-	}
-	
 	public Chunk getChunk(TilePos pos) {
 		return getChunk(getChunkPos(pos));
 	}
@@ -116,7 +109,7 @@ public class World {
 	}
 	
 	public ChunkPos getChunkPos(TilePos pos) {
-		return new ChunkPos(Math.floor(pos.x / 16D), Math.floor(pos.y / 16D));
+		return new ChunkPos((int)Math.floor(pos.x / 16D), (int)Math.floor(pos.y / 16D));
 	}
 	
 	public Chunk loadChunk(ChunkPos cp) {
