@@ -174,7 +174,7 @@ public class Resup implements IEngineInterface {
 			graphics.translate(ax, ay);
 			graphics.drawRect(0, 0, 32, 32);
 			
-			graphics.drawString(ctx + " " + cty + " " + ppp + " " + world.getTile(pos).name, 0, 0);
+			graphics.drawString(ctx + " " + cty + " " + ppp + " " + world.getChunk(ppp).getTile(ctx, cty).name, 0, 0);
 			graphics.translate(-ax, -ay);
 		}
 		

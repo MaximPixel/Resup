@@ -19,7 +19,7 @@ public class ItemTile extends Item {
 	@Override
 	public boolean onUse(EntityPlayer player, World world, TilePos pos, ItemStack stack) {
 		Tile tile = world.getTile(pos);
-		if (tile != null && tile == Tiles.AIR) {
+		if (tile == Tiles.AIR) {
 			if (world.setTile(pos, this.tile)) {
 				stack.shrink();
 				return true;

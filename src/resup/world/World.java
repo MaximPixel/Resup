@@ -89,7 +89,9 @@ public class World {
 		if (chunk == null) {
 			return null;
 		}
-		return chunk.getTile(pos.toChunkTileX(), pos.toChunkTileX());
+		int ctx = pos.toChunkTileX();
+		int cty = pos.toChunkTileY();
+		return chunk.getTile(ctx, cty);
 	}
 	
 	public boolean setTile(TilePos pos, Tile tile) {
@@ -97,7 +99,9 @@ public class World {
 		if (chunk == null) {
 			return false;
 		}
-		return chunk.setTile(pos.toChunkTileX(), pos.toChunkTileY(), tile);
+		int ctx = pos.toChunkTileX();
+		int cty = pos.toChunkTileY();
+		return chunk.setTile(ctx, cty, tile);
 	}
 	
 	public Chunk getChunk(TilePos pos) {
