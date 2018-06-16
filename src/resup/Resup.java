@@ -79,6 +79,7 @@ public class Resup implements IEngineInterface {
 		player.inventory.slots.get(1).stack = new ItemStack(Items.PICKAXE, 1);
 		player.inventory.slots.get(0).stack = new ItemStack(Items.BRICK_TILE, 2);
 		player.inventory.slots.get(2).stack = new ItemStack(Items.BRICK_TILE, 9);
+		player.inventory.slots.get(3).stack = new ItemStack(Items.COMPUTER_TILE, 1);
 	}
 	
 	@Override
@@ -167,16 +168,6 @@ public class Resup implements IEngineInterface {
 		int cty = pos.toChunkTileY();
 		
 		ItemStack currentStack = player.inventory.slots.get(currentSlot).stack;
-		if (currentStack.item instanceof ItemTile) {
-			graphics.setColor(Color.YELLOW);
-			int ax = ppp.chunkX * 16 * 32 + ctx * 32;
-			int ay = ppp.chunkY * 16 * 32 + cty * 32;
-			graphics.translate(ax, ay);
-			graphics.drawRect(0, 0, 32, 32);
-			
-			graphics.drawString(ctx + " " + cty + " " + ppp + " " + world.getChunk(ppp).getTile(ctx, cty).name, 0, 0);
-			graphics.translate(-ax, -ay);
-		}
 		
 		for (Chunk ch : world.chunks.values()) {
 			int ttx = ch.pos.chunkX * 32 * 16;
@@ -195,6 +186,15 @@ public class Resup implements IEngineInterface {
 			
 			graphics.setColor(Color.BLACK);
 			graphics.drawRect(0, 0, 512, 512);
+			
+			if (currentStack.item instanceof ItemTile) {
+				graphics.setColor(Color.YELLOW);
+				int ax = ppp.chunkX * 16 * 32 + ctx * 32;
+				int ay = ppp.chunkY * 16 * 32 + cty * 32;
+				graphics.translate(ax, ay);
+				graphics.drawRect(0, 0, 32, 32);
+				graphics.translate(-ax, -ay);
+			}
 			
 			graphics.translate(-ttx, -tty);
 		}
@@ -300,6 +300,12 @@ public class Resup implements IEngineInterface {
 		
 		if (img != null) {
 			graphics.drawImage(img, x, y, 32, 32, null);
+		} else {
+			if (stack.item instanceof ItemTile) {
+				Tile tile = ((ItemTile)stack.item).tile;
+				graphics.setColor(tile.color);
+				graphics.fillRect(x, y, 32, 32);
+			}
 		}
 		
 		onAA(graphics);

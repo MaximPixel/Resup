@@ -12,11 +12,12 @@ public class Items {
 	
 	public static final ItemTile AIR_TILE = new ItemTile(Tiles.AIR);
 	public static final ItemTile BRICK_TILE = new ItemTile(Tiles.BRICK);
+	public static final ItemTile COMPUTER_TILE = new ItemTile(Tiles.COMPUTER);
 	
 	private static ArrayList<Item> items = new ArrayList();
 	
 	public static void init() {
-		addToReg(PICKAXE, AIR_TILE, BRICK_TILE);
+		addToReg(PICKAXE, AIR_TILE, BRICK_TILE, COMPUTER_TILE);
 	}
 	
 	public static void preInit() {
