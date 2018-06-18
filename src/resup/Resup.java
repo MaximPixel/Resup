@@ -52,8 +52,11 @@ public class Resup implements IEngineInterface {
 	
 	public static void main(String... args) {
 		
-		images.put("pickaxe", EngineFiles.loadImage("res/resup/images/items/pickaxe.png"));
-		images.put("brick", EngineFiles.loadImage("res/resup/images/items/brick.png"));
+		images.put("item:pickaxe", EngineFiles.loadImage("res/resup/images/items/pickaxe.png"));
+		images.put("item:brick", EngineFiles.loadImage("res/resup/images/items/brick.png"));
+
+		images.put("tile:brick", EngineFiles.loadImage("res/resup/images/tiles/brick.png"));
+		images.put("tile:planks", EngineFiles.loadImage("res/resup/images/tiles/planks.png"));
 		
 		Tiles.init();
 		Items.init();
@@ -178,8 +181,11 @@ public class Resup implements IEngineInterface {
 				for (int b = 0; b < 16; b++) {
 					Tile t = ch.getTile(a, b);
 					if (t != null && t != Tiles.AIR) {
-						graphics.setColor(t.color);
-						graphics.fillRect(a * 32, b * 32, 32, 32);
+						int tttx = a * 32;
+						int ttty = b * 32;
+						graphics.translate(tttx, ttty);
+						drawTile(graphics, t);
+						graphics.translate(-tttx, -ttty);
 					}
 				}
 			}
@@ -296,15 +302,17 @@ public class Resup implements IEngineInterface {
 	public static void drawItem(Graphics2D graphics, int x, int y, ItemStack stack) {
 		Item item = stack.item;
 		
-		BufferedImage img = images.get(item.name);
+		BufferedImage img = images.get("item:" + item.name);
 		
 		if (img != null) {
 			graphics.drawImage(img, x, y, 32, 32, null);
 		} else {
 			if (stack.item instanceof ItemTile) {
 				Tile tile = ((ItemTile)stack.item).tile;
-				graphics.setColor(tile.color);
-				graphics.fillRect(x, y, 32, 32);
+				
+				graphics.translate(x, y);
+				drawTile(graphics, tile);
+				graphics.translate(-x, -y);
 			}
 		}
 		
@@ -330,5 +338,16 @@ public class Resup implements IEngineInterface {
         graphics.setColor(Color.BLACK);
         graphics.draw(outline);
         graphics.translate(-x, -y);
+	}
+	
+	public static void drawTile(Graphics2D graphics, Tile tile) {
+		BufferedImage image = images.get("tile:" + tile.name);
+		
+		if (image == null) {
+			graphics.setColor(tile.color);
+			graphics.fillRect(0, 0, 32, 32);
+		} else {
+			graphics.drawImage(image, 0, 0, 32, 32, null);
+		}
 	}
 }
