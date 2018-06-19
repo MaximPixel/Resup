@@ -1,11 +1,14 @@
 package resup.world;
 
 import resup.util.TilePos;
+
+import java.util.Random;
 import resup.init.Tiles;
 import resup.tile.Tile;
 import resup.util.ChunkPos;
 import resup.util.DataInput;
 import resup.util.DataOutput;
+import resup.util.PerlinNoise;
 
 public class Chunk {
 	
@@ -17,6 +20,18 @@ public class Chunk {
 	public Chunk(World world, ChunkPos pos) {
 		this.world = world;
 		this.pos = pos;
+		
+		PerlinNoise noise = new PerlinNoise(world.seed);
+		for (int a = 0; a < 16; a++) {
+			for (int b = 0; b < 16; b++) {
+				int x = pos.chunkX * 16 + a;
+				int y = pos.chunkY * 16 + b;
+				float c = noise.getNoise(x / 100F, y / 100F, 8, 0.5F);
+				if (c > 0) {
+					setTile(a, b, Tiles.BRICK);
+				}
+			}
+		}
 	}
 	
 	public Tile getTile(int x, int y) {

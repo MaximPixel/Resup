@@ -3,6 +3,7 @@ package resup.world;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import resup.util.TilePos;
 import resup.entity.Entity;
@@ -18,8 +19,10 @@ public class World {
 	public ArrayList<Entity> entities = new ArrayList();
 	public HashMap<TilePos, TileEntity> tileentities = new HashMap();
 	
+	public final long seed;
+	
 	public World() {
-		
+		seed = new Random().nextLong();
 	}
 	
 	public void update() {
