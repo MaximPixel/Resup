@@ -3,7 +3,6 @@ package resup.util;
 import java.io.Serializable;
 
 import mpengine.EngineMath;
-import resup.entity.EntityPlayer;
 
 public class ChunkPos implements Serializable {
 	

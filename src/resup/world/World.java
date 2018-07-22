@@ -8,7 +8,6 @@ import java.util.Random;
 import resup.util.TilePos;
 import resup.entity.Entity;
 import resup.entity.EntityPlayer;
-import resup.init.Tiles;
 import resup.tile.Tile;
 import resup.tileentity.TileEntity;
 import resup.util.ChunkPos;

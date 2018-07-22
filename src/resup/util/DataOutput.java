@@ -11,9 +11,9 @@ public class DataOutput {
 	public DataOutputStream dos = new DataOutputStream(bos);
 	
 	public static void main(String... args) {
-		DataOutput out = new DataOutput();
+		//DataOutput out = new DataOutput();
 		
-		DataInput in = new DataInput(out.getBytes());
+		//DataInput in = new DataInput(out.getBytes());
 	}
 	
 	public void writeByte(byte v) {

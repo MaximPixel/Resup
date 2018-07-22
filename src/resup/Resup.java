@@ -25,11 +25,9 @@ import resup.entity.Entity;
 import resup.entity.EntityPlayer;
 import resup.init.Items;
 import resup.init.Tiles;
-import resup.inventory.InventoryPlayer;
 import resup.item.Item;
 import resup.item.ItemTile;
 import resup.tile.Tile;
-import resup.tileentity.TileEntity;
 import resup.util.ChunkPos;
 import resup.util.ItemStack;
 import resup.world.Chunk;
@@ -194,6 +192,7 @@ public class Resup implements IEngineInterface {
 			graphics.drawRect(0, 0, 512, 512);
 			
 			if (currentStack.item instanceof ItemTile) {
+				
 				graphics.setColor(Color.YELLOW);
 				int ax = ppp.chunkX * 16 * 32 + ctx * 32;
 				int ay = ppp.chunkY * 16 * 32 + cty * 32;

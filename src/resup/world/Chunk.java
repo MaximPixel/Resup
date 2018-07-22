@@ -21,13 +21,14 @@ public class Chunk {
 		this.world = world;
 		this.pos = pos;
 		
+		Random rand = new Random();
 		PerlinNoise noise = new PerlinNoise(world.seed);
 		for (int a = 0; a < 16; a++) {
 			for (int b = 0; b < 16; b++) {
 				int x = pos.chunkX * 16 + a;
 				int y = pos.chunkY * 16 + b;
 				float c = noise.getNoise(x / 100F, y / 100F, 8, 0.5F);
-				if (c > 0) {
+				if (c > 0 && rand.nextBoolean()) {
 					setTile(a, b, Tiles.BRICK);
 				}
 			}

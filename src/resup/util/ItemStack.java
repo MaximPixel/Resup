@@ -1,7 +1,6 @@
 package resup.util;
 
 import resup.init.Items;
-import resup.init.Tiles;
 import resup.item.Item;
 import resup.tile.Tile;
 
