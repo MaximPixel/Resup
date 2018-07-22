@@ -190,18 +190,16 @@ public class Resup implements IEngineInterface {
 			
 			graphics.setColor(Color.BLACK);
 			graphics.drawRect(0, 0, 512, 512);
-			
-			if (currentStack.item instanceof ItemTile) {
-				
-				graphics.setColor(Color.YELLOW);
-				int ax = ppp.chunkX * 16 * 32 + ctx * 32;
-				int ay = ppp.chunkY * 16 * 32 + cty * 32;
-				graphics.translate(ax, ay);
-				graphics.drawRect(0, 0, 32, 32);
-				graphics.translate(-ax, -ay);
-			}
-			
 			graphics.translate(-ttx, -tty);
+		}
+		
+		if (currentStack.item instanceof ItemTile) {
+			graphics.setColor(Color.YELLOW);
+			int ax = ppp.chunkX * 16 * 32 + ctx * 32;
+			int ay = ppp.chunkY * 16 * 32 + cty * 32;
+			graphics.translate(ax, ay);
+			graphics.drawRect(0, 0, 32, 32);
+			graphics.translate(-ax, -ay);
 		}
 		
 		for (Entity ent : world.entities) {
