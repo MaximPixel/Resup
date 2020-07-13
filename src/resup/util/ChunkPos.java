@@ -6,6 +6,7 @@ import mpengine.EngineMath;
 
 public class ChunkPos implements Serializable {
 	
+	private static final long serialVersionUID = -3835637527936016610L;
 	public int chunkX, chunkY;
 	
 	public ChunkPos(double x, double y) {

@@ -46,7 +46,7 @@ public class World {
 		
 		for (TileEntity te : ((HashMap<TilePos, TileEntity>)tileentities.clone()).values()) {
 			if (te.remove) {
-				tileentities.remove(te);
+				tileentities.remove(te.pos);
 			} else {
 				te.update();
 			}

@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class TilePos implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
 	public int x, y;
 	
 	public TilePos(int x, int y) {
